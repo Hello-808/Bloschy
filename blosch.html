@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloxd.io Kartenentwürfe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            Bloxd.io Kartenentwürfe
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search Maps">
+            <button class="search-button"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="header-buttons">
+            <a href="#" id="uploadButton">Upload</a>
+            <a href="bloschADMINlogin.html">Admin Login</a>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <label for="tags-filter" class="filter-label">Tags :</label>
+        <select id="tags-filter" class="filter-select">
+            <option value="None">None</option>
+            <option value="Bedwars">Bedwars</option>
+            <option value="Bridge">Bridge</option>
+            <option value="Rocket Obby">Rocket Obby</option>
+            <option value="Rocket Spleef">Rocket Spleef</option>
+        </select>
+        <button class="filter-go-button">Go</button>
+    </div>
+
+    <div class="schematics-container">
+    </div>
+
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeUploadForm()">&times;</span>
+            <h2>Upload Map Schematic</h2>
+            <form class="upload-form" id="uploadForm">
+                <label for="upload-author">Your Name:</label>
+                <input type="text" id="upload-author" name="upload-author" required>
+
+                <label for="upload-title">schematic Title:</label>
+                <input type="text" id="upload-title" name="upload-title" required>
+
+                <label for="upload-image">Image:</label>
+                <input type="file" id="upload-image" name="upload-image" accept="image/*" required>
+
+                <label for="upload-file">Schematic File:</label>
+                <input type="file" id="upload-file" name="upload-file" required>
+
+                <label for="upload-description">Description:</label>
+                <textarea id="upload-description" name="upload-description" rows="4" required></textarea>
+
+                <div class="tag-select-container">
+                    <label>Select Tags:</label>
+                    <div class="tag-checkbox-group">
+                        <input type="checkbox" id="tag-bedwars" name="tags" value="Bedwars">
+                        <label for="tag-bedwars">Bedwars</label>
+
+                        <input type="checkbox" id="tag-bridge" name="tags" value="Bridge">
+                        <label for="tag-bridge">Bridge</label>
+
+                        <input type="checkbox" id="tag-rocket-obby" name="tags" value="Rocket Obby">
+                        <label for="tag-rocket-obby">Rocket Obby</label>
+
+                        <input type="checkbox" id="tag-rocket-spleef" name="tags" value="Rocket Spleef">
+                        <label for="tag-rocket-spleef">Rocket Spleef</label>
+                    </div>
+                </div>
+
+                <button type="submit">Submit Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://kit.fontawesome.com/your_fontawesome_kit_id.js" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloxdium Admin Panel</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .admin-actions {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .admin-actions button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .admin-actions button:hover {
+            background-color: #4cae4c;
+        }
+
+        .submission-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .submission-item {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submission-info {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .submission-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .submission-creator {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        .edit-form-container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .edit-form-container h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        .form-group button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .form-group button:hover {
+            background-color: #218838;
+        }
+
+        .logout-button {
+            display: block;
+            margin-top: 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 150px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bloxd.io Kartenentwürfe Admin Panel</h1>
+
+        <h2>Current Submissions</h2>
+        <ul class="submission-list">
+            </ul>
+
+        <div id="edit-form-placeholder" style="display: none;">
+            <h3>Edit Submission</h3>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="edit-title">Title:</label>
+                    <input type="text" id="edit-title">
+                </div>
+                <div class="form-group">
+                    <label for="edit-creator">Creator:</label>
+                    <input type="text" id="edit-creator">
+                </div>
+                <div class="form-group">
+                    <label for="edit-image">Image URL:</label>
+                    <input type="text" id="edit-image">
+                </div>
+                <div class="form-group">
+                    <label for="edit-about">About:</label>
+                    <textarea id="edit-about"></textarea>
+                </div>
+                <input type="hidden" id="edit-submission-id">
+                <div class="form-group">
+                    <button type="submit">Save Changes</button>
+                    <button type="button" onclick="closeEditForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <button class="logout-button"><a href="blosch.html">Logout</a></button>
+    </div>
+
+    <script>
+        function getSubmissions() {
+            const storedSubmissions = localStorage.getItem('bloxdSchematics');
+            if (storedSubmissions) {
+                return JSON.parse(storedSubmissions);
+            }
+            return [];
+        }
+
+        function loadSubmissions() {
+            const submissionList = document.querySelector('.submission-list');
+            submissionList.innerHTML = ''; // Clear existing list items
+
+            const submissions = getSubmissions();
+
+            submissions.forEach((submission, index) => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('submission-item');
+                listItem.id = `submission-${index}`; // Use index as a simple ID for now
+
+                listItem.innerHTML = `
+                    <div class="submission-info">
+                        <div class="submission-title">${submission.title}</div>
+                        <div class="submission-creator">Creator: ${submission.creator}</div>
+                    </div>
+                    <div class="admin-buttons">
+                        <button class="edit-button" onclick="openEditForm(${index})">Edit</button>
+                        <button class="delete-button" onclick="deleteSubmission(${index})">Delete</button>
+                    </div>
+                `;
+                submissionList.appendChild(listItem);
+            });
+        }
+
+        function openEditForm(submissionIndex) {
+            const submissions = getSubmissions();
+            const submission = submissions[submissionIndex];
+            const editFormContainer = document.getElementById('edit-form-placeholder');
+            const editTitleInput = document.getElementById('edit-title');
+            const editCreatorInput = document.getElementById('edit-creator');
+            const editImageInput = document.getElementById('edit-image');
+            const editAboutTextarea = document.getElementById('edit-about');
+            const editSubmissionIdInput = document.getElementById('edit-submission-id');
+
+            editTitleInput.value = submission.title;
+            editCreatorInput.value = submission.creator.replace(/<span class="admin-badge">\[Admin\]<\/span> /, ''); // Remove admin badge for editing
+            editImageInput.value = submission.image;
+            editAboutTextarea.value = submission.description || ''; // Assuming you might want to edit description
+            editSubmissionIdInput.value = submissionIndex;
+
+            editFormContainer.style.display = 'block';
+        }
+
+        function closeEditForm() {
+            document.getElementById('edit-form-placeholder').style.display = 'none';
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const indexToEdit = document.getElementById('edit-submission-id').value;
+            const submissions = getSubmissions();
+            if (submissions[indexToEdit]) {
+                const editedSubmission = {
+                    title: document.getElementById('edit-title').value,
+                    creator: document.getElementById('edit-creator').value,
+                    image: document.getElementById('edit-image').value,
+                    tags: submissions[indexToEdit].tags, // Keep existing tags for now
+                    description: document.getElementById('edit-about').value
+                };
+                submissions[indexToEdit] = editedSubmission;
+                localStorage.setItem('bloxdSchematics', JSON.stringify(submissions));
+                loadSubmissions();
+                closeEditForm();
+                alert('Submission updated!');
+            }
+        });
+
+        function deleteSubmission(submissionIndex) {
+            if (confirm(`Are you sure you want to delete this submission?`)) {
+                const submissions = getSubmissions();
+                submissions.splice(submissionIndex, 1); // Remove the submission at the given index
+                localStorage.setItem('bloxdSchematics', JSON.stringify(submissions));
+                loadSubmissions(); // Reload the list
+            }
+        }
+
+        // Call loadSubmissions when the admin panel page loads
+        window.onload = loadSubmissions;
+    </script>
+</body>
+</html>
